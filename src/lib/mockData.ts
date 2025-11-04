@@ -1,21 +1,21 @@
 // Mock data para desarrollo y pruebas
 import { Technician, WorkOrder, LoginResponse } from './api';
 
-// Usuarios mock
+// Usuarios mock  
 export const mockUsers = {
-  supervisor_test: {
+  'supervisor_test@telconova.com': {
     password: 'password123',
     user: {
       id: 'sup-001',
-      username: 'supervisor_test',
+      username: 'supervisor_test@telconova.com',
       role: 'supervisor',
     },
   },
-  admin_demo: {
+  'admin_demo@telconova.com': {
     password: 'admin123',
     user: {
       id: 'adm-001',
-      username: 'admin_demo',
+      username: 'admin_demo@telconova.com',
       role: 'admin',
     },
   },
@@ -27,11 +27,24 @@ export const mockUsers = {
       role: 'admin',
     },
   },
+  'test@example.com': {
+    password: 'secret',
+    user: {
+      id: 'test-001',
+      username: 'test@example.com',
+      role: 'supervisor',
+    },
+  },
 };
 
 // Técnicos mock
 export const mockTechnicians: Technician[] = [
   {
+    idTecnico: 1,
+    nameTecnico: 'Carlos Rodríguez',
+    zoneTecnico: 'Norte',
+    workloadTecnico: '0',
+    specialtyTecnico: 'Fibra Óptica',
     id: 'tech-001',
     name: 'Carlos Rodríguez',
     email: 'carlos.rodriguez@telconova.com',
@@ -43,6 +56,11 @@ export const mockTechnicians: Technician[] = [
     certifications: ['FTTH', 'Fusión de Fibra', 'GPON'],
   },
   {
+    idTecnico: 2,
+    nameTecnico: 'Ana María González',
+    zoneTecnico: 'Sur',
+    workloadTecnico: '1',
+    specialtyTecnico: 'Redes Inalámbricas',
     id: 'tech-002',
     name: 'Ana María González',
     email: 'ana.gonzalez@telconova.com',
@@ -54,6 +72,11 @@ export const mockTechnicians: Technician[] = [
     certifications: ['WiFi 6', 'Mikrotik', 'Ubiquiti'],
   },
   {
+    idTecnico: 3,
+    nameTecnico: 'Miguel Ángel Pérez',
+    zoneTecnico: 'Centro',
+    workloadTecnico: '3',
+    specialtyTecnico: 'Cableado Estructurado',
     id: 'tech-003',
     name: 'Miguel Ángel Pérez',
     email: 'miguel.perez@telconova.com',
@@ -65,6 +88,11 @@ export const mockTechnicians: Technician[] = [
     certifications: ['Cat6A', 'Cat7', 'Certificación Fluke'],
   },
   {
+    idTecnico: 4,
+    nameTecnico: 'Laura Martínez',
+    zoneTecnico: 'Norte',
+    workloadTecnico: '1',
+    specialtyTecnico: 'Fibra Óptica',
     id: 'tech-004',
     name: 'Laura Martínez',
     email: 'laura.martinez@telconova.com',
@@ -76,6 +104,11 @@ export const mockTechnicians: Technician[] = [
     certifications: ['FTTH', 'OTDR', 'Splicing'],
   },
   {
+    idTecnico: 5,
+    nameTecnico: 'Juan David Silva',
+    zoneTecnico: 'Este',
+    workloadTecnico: '2',
+    specialtyTecnico: 'Telefonía IP',
     id: 'tech-005',
     name: 'Juan David Silva',
     email: 'juan.silva@telconova.com',
@@ -87,6 +120,11 @@ export const mockTechnicians: Technician[] = [
     certifications: ['VoIP', 'Asterisk', 'SIP Trunking'],
   },
   {
+    idTecnico: 6,
+    nameTecnico: 'Patricia Ramírez',
+    zoneTecnico: 'Oeste',
+    workloadTecnico: '2',
+    specialtyTecnico: 'Redes Inalámbricas',
     id: 'tech-006',
     name: 'Patricia Ramírez',
     email: 'patricia.ramirez@telconova.com',
@@ -98,6 +136,11 @@ export const mockTechnicians: Technician[] = [
     certifications: ['WiFi 6E', 'Site Survey', 'Ruckus'],
   },
   {
+    idTecnico: 7,
+    nameTecnico: 'Roberto Gómez',
+    zoneTecnico: 'Sur',
+    workloadTecnico: '0',
+    specialtyTecnico: 'Cableado Estructurado',
     id: 'tech-007',
     name: 'Roberto Gómez',
     email: 'roberto.gomez@telconova.com',
@@ -109,6 +152,11 @@ export const mockTechnicians: Technician[] = [
     certifications: ['TIA-568', 'Data Center', 'Panduit'],
   },
   {
+    idTecnico: 8,
+    nameTecnico: 'Diana López',
+    zoneTecnico: 'Centro',
+    workloadTecnico: '0',
+    specialtyTecnico: 'Fibra Óptica',
     id: 'tech-008',
     name: 'Diana López',
     email: 'diana.lopez@telconova.com',

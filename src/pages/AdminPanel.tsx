@@ -16,7 +16,7 @@ const AdminPanel = () => {
   // User registration state
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
-  const [userUsername, setUserUsername] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [userConfirmPassword, setUserConfirmPassword] = useState("");
   const [showUserPassword, setShowUserPassword] = useState(false);
@@ -25,8 +25,7 @@ const AdminPanel = () => {
 
   // Technician registration state
   const [techName, setTechName] = useState("");
-  const [techEmail, setTechEmail] = useState("");
-  const [techPhone, setTechPhone] = useState("");
+  const [techWorkload, setTechWorkload] = useState("0");
   const [techSpecialty, setTechSpecialty] = useState("");
   const [techZone, setTechZone] = useState("");
   const [techLoading, setTechLoading] = useState(false);
@@ -34,7 +33,7 @@ const AdminPanel = () => {
   const handleUserSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!userName || !userRole || !userUsername || !userPassword) {
+    if (!userName || !userRole || !userEmail || !userPassword) {
       toast({
         title: "Campos requeridos",
         description: "Por favor completa todos los campos.",
@@ -67,7 +66,7 @@ const AdminPanel = () => {
       await apiService.register({
         name: userName,
         role: userRole,
-        username: userUsername,
+        email: userEmail,
         password: userPassword,
       });
 
@@ -79,7 +78,7 @@ const AdminPanel = () => {
       // Clear form
       setUserName("");
       setUserRole("");
-      setUserUsername("");
+      setUserEmail("");
       setUserPassword("");
       setUserConfirmPassword("");
     } catch (error: any) {
@@ -96,7 +95,7 @@ const AdminPanel = () => {
   const handleTechnicianSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!techName || !techEmail || !techPhone || !techSpecialty || !techZone) {
+    if (!techName || !techSpecialty || !techZone) {
       toast({
         title: "Campos requeridos",
         description: "Por favor completa todos los campos.",
@@ -109,11 +108,10 @@ const AdminPanel = () => {
 
     try {
       await apiService.registerTechnician({
-        name: techName,
-        email: techEmail,
-        phone: techPhone,
-        specialty: techSpecialty,
-        zone: techZone,
+        nameTecnico: techName,
+        zoneTecnico: techZone,
+        workloadTecnico: techWorkload,
+        specialtyTecnico: techSpecialty,
       });
 
       toast({
@@ -123,8 +121,7 @@ const AdminPanel = () => {
 
       // Clear form
       setTechName("");
-      setTechEmail("");
-      setTechPhone("");
+      setTechWorkload("0");
       setTechSpecialty("");
       setTechZone("");
     } catch (error: any) {
@@ -209,13 +206,13 @@ const AdminPanel = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="userUsername">Correo Electrónico</Label>
+                    <Label htmlFor="userEmail">Correo Electrónico</Label>
                     <Input
-                      id="userUsername"
+                      id="userEmail"
                       type="email"
                       placeholder="usuario@telconova.com"
-                      value={userUsername}
-                      onChange={(e) => setUserUsername(e.target.value)}
+                      value={userEmail}
+                      onChange={(e) => setUserEmail(e.target.value)}
                       disabled={userLoading}
                       aria-required="true"
                       aria-label="Campo de correo electrónico del usuario"
@@ -314,25 +311,14 @@ const AdminPanel = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="techEmail">Correo Electrónico</Label>
+                    <Label htmlFor="techWorkload">Carga de Trabajo Actual</Label>
                     <Input
-                      id="techEmail"
-                      type="email"
-                      placeholder="tecnico@telconova.com"
-                      value={techEmail}
-                      onChange={(e) => setTechEmail(e.target.value)}
-                      disabled={techLoading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="techPhone">Teléfono</Label>
-                    <Input
-                      id="techPhone"
-                      type="tel"
-                      placeholder="+57 300 123 4567"
-                      value={techPhone}
-                      onChange={(e) => setTechPhone(e.target.value)}
+                      id="techWorkload"
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      value={techWorkload}
+                      onChange={(e) => setTechWorkload(e.target.value)}
                       disabled={techLoading}
                     />
                   </div>

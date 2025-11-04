@@ -38,15 +38,15 @@ class MockApiService {
     localStorage.removeItem('auth_token');
   }
 
-  private isBlocked(username: string): boolean {
-    const blockUntil = this.blockedUsers.get(username);
+  private isBlocked(email: string): boolean {
+    const blockUntil = this.blockedUsers.get(email);
     if (!blockUntil) return false;
     
     if (Date.now() < blockUntil) {
       return true;
     } else {
-      this.blockedUsers.delete(username);
-      this.failedAttempts.delete(username);
+      this.blockedUsers.delete(email);
+      this.failedAttempts.delete(email);
       return false;
     }
   }
@@ -55,19 +55,19 @@ class MockApiService {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     await simulateDelay(800);
 
-    if (this.isBlocked(credentials.username)) {
+    if (this.isBlocked(credentials.email)) {
       throw new Error('Cuenta bloqueada. Intenta nuevamente en 15 minutos.');
     }
 
-    const user = mockUsers[credentials.username as keyof typeof mockUsers];
+    const user = mockUsers[credentials.email as keyof typeof mockUsers];
     
     if (!user || user.password !== credentials.password) {
-      const attempts = (this.failedAttempts.get(credentials.username) || 0) + 1;
-      this.failedAttempts.set(credentials.username, attempts);
+      const attempts = (this.failedAttempts.get(credentials.email) || 0) + 1;
+      this.failedAttempts.set(credentials.email, attempts);
 
       if (attempts >= 3) {
         const blockUntil = Date.now() + (15 * 60 * 1000); // 15 minutos
-        this.blockedUsers.set(credentials.username, blockUntil);
+        this.blockedUsers.set(credentials.email, blockUntil);
         throw new Error('Cuenta bloqueada por 15 minutos debido a múltiples intentos fallidos.');
       }
 
@@ -75,7 +75,7 @@ class MockApiService {
     }
 
     // Reset intentos fallidos en login exitoso
-    this.failedAttempts.delete(credentials.username);
+    this.failedAttempts.delete(credentials.email);
 
     const token = `mock-token-${Date.now()}`;
     this.setToken(token);
@@ -91,13 +91,13 @@ class MockApiService {
     await simulateDelay(800);
     
     // Verificar si el usuario ya existe
-    const existingUser = mockUsers[credentials.username as keyof typeof mockUsers];
+    const existingUser = mockUsers[credentials.email as keyof typeof mockUsers];
     if (existingUser) {
       throw new Error('User with that email already exists');
     }
     
     // Simular registro exitoso
-    console.log('Mock: Usuario registrado:', credentials.username);
+    console.log('Mock: Usuario registrado:', credentials.email);
     return {
       message: 'User registered'
     };
@@ -275,14 +275,19 @@ class MockApiService {
     await simulateDelay();
     
     const newTechnician: Technician = {
+      idTecnico: Date.now(),
+      nameTecnico: data.nameTecnico,
+      zoneTecnico: data.zoneTecnico,
+      workloadTecnico: data.workloadTecnico,
+      specialtyTecnico: data.specialtyTecnico,
       id: `tech_${Date.now()}`,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      specialty: data.specialty,
-      zone: data.zone,
+      name: data.nameTecnico,
+      zone: data.zoneTecnico,
+      specialty: data.specialtyTecnico,
+      currentLoad: parseInt(data.workloadTecnico) || 0,
       availability: 'available',
-      currentLoad: 0,
+      email: `${data.nameTecnico.toLowerCase().replace(/\s+/g, '.')}@telconova.com`,
+      phone: '+1234567890',
       certifications: []
     };
     

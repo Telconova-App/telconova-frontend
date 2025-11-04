@@ -13,7 +13,7 @@ import logo from "@/assets/logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,10 +33,10 @@ const Login = () => {
       return;
     }
 
-    if (!username || !password) {
+    if (!email || !password) {
       toast({
         title: "Campos requeridos",
-        description: "Por favor ingresa usuario y contraseña.",
+        description: "Por favor ingresa correo y contraseña.",
         variant: "destructive",
       });
       return;
@@ -45,7 +45,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await apiService.login({ username, password });
+      const response = await apiService.login({ email, password });
       
       // Admins y supervisores pueden acceder
       if (response.user.role !== 'supervisor' && response.user.role !== 'admin') {
@@ -126,16 +126,16 @@ const Login = () => {
           
           <form onSubmit={handleSubmit} className="space-y-4" aria-label="Formulario de inicio de sesión">
             <div className="space-y-2">
-              <Label htmlFor="username">Usuario</Label>
+              <Label htmlFor="email">Correo Electrónico</Label>
               <Input
-                id="username"
-                type="text"
-                placeholder="Ingresa tu usuario"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="usuario@ejemplo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled={loading || isBlocked}
                 required
-                aria-label="Campo de usuario"
+                aria-label="Campo de correo electrónico"
               />
             </div>
             

@@ -14,7 +14,7 @@ const Register = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +24,7 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !role || !username || !password || !confirmPassword) {
+    if (!name || !role || !email || !password || !confirmPassword) {
       toast({
         title: "Campos requeridos",
         description: "Por favor completa todos los campos.",
@@ -54,7 +54,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await apiService.register({ name, role, username, password });
+      await apiService.register({ name, role, email, password });
 
       toast({
         title: "Registro exitoso",
@@ -119,16 +119,16 @@ const Register = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="username">Usuario (Email)</Label>
+                <Label htmlFor="email">Correo Electrónico</Label>
                 <Input
-                  id="username"
+                  id="email"
                   type="email"
                   placeholder="usuario@ejemplo.com"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                   required
-                  aria-label="Campo de usuario"
+                  aria-label="Campo de correo electrónico"
                 />
               </div>
               

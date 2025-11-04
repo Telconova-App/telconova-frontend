@@ -6,14 +6,14 @@ const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API !== 'false'; // Usar mock
 import { mockApiService } from './mockApi';
 
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface RegisterCredentials {
   name: string;
   role: string;
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -32,15 +32,21 @@ export interface RegisterResponse {
 }
 
 export interface Technician {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  specialty: string;
-  zone: string;
-  availability: 'available' | 'busy' | 'offline';
-  currentLoad: number;
-  certifications: string[];
+  idTecnico: number;
+  nameTecnico: string;
+  zoneTecnico: string;
+  workloadTecnico: string;
+  specialtyTecnico: string;
+  // Frontend compatibility fields
+  id?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  specialty?: string;
+  zone?: string;
+  availability?: 'available' | 'busy' | 'offline';
+  currentLoad?: number;
+  certifications?: string[];
 }
 
 export interface WorkOrder {
@@ -71,11 +77,10 @@ export interface NotificationData {
 }
 
 export interface TechnicianRegistration {
-  name: string;
-  email: string;
-  phone: string;
-  specialty: string;
-  zone: string;
+  nameTecnico: string;
+  zoneTecnico: string;
+  workloadTecnico: string;
+  specialtyTecnico: string;
 }
 
 class ApiService {
@@ -134,27 +139,23 @@ class ApiService {
       return mockApiService.login(credentials);
     }
     
-    // Convertir formato para Spring Boot backend
-    const backendCredentials = {
-      correo: credentials.username,
-      contraseña: credentials.password
-    };
-    
-    const response = await this.request<{ message: string; token: string }>('/auth/login', {
+    const response = await this.request<string>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify(backendCredentials),
+      body: JSON.stringify(credentials),
     });
     
-    this.setToken(response.token);
+    // Backend solo devuelve un mensaje, no hay token real
+    // Crear token simulado para compatibilidad con frontend
+    const simulatedToken = btoa(`${credentials.email}:${Date.now()}`);
+    this.setToken(simulatedToken);
     
-    // Construir respuesta en formato esperado por el frontend
     return {
-      message: response.message,
-      token: response.token,
+      message: response,
+      token: simulatedToken,
       user: {
-        id: credentials.username,
-        username: credentials.username,
-        role: 'supervisor' // El backend debería devolver esto, asumimos supervisor por ahora
+        id: credentials.email,
+        username: credentials.email,
+        role: 'supervisor'
       }
     };
   }
@@ -164,21 +165,13 @@ class ApiService {
       return mockApiService.register(credentials);
     }
     
-    // Convertir formato para Spring Boot backend
-    const backendCredentials = {
-      nombre: credentials.name,
-      rol: credentials.role,
-      correo: credentials.username,
-      contraseña: credentials.password
-    };
-    
-    const response = await this.request<{ message: string }>('/auth/register', {
+    const response = await this.request<string>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(backendCredentials),
+      body: JSON.stringify(credentials),
     });
     
     return {
-      message: response.message
+      message: response
     };
   }
 
@@ -198,13 +191,29 @@ class ApiService {
     if (USE_MOCK_API) {
       return mockApiService.getTechnicians(filters);
     }
-    const params = new URLSearchParams();
-    if (filters?.zone) params.append('zone', filters.zone);
-    if (filters?.specialty) params.append('specialty', filters.specialty);
-    if (filters?.availability) params.append('availability', filters.availability);
-
-    const query = params.toString() ? `?${params.toString()}` : '';
-    return this.request<Technician[]>(`/technicians${query}`);
+    
+    const technicians = await this.request<Technician[]>('/technicians/all');
+    
+    // Transform backend format to frontend format and apply filters
+    return technicians
+      .map(tech => ({
+        ...tech,
+        id: tech.idTecnico.toString(),
+        name: tech.nameTecnico,
+        zone: tech.zoneTecnico,
+        specialty: tech.specialtyTecnico,
+        currentLoad: parseInt(tech.workloadTecnico) || 0,
+        availability: parseInt(tech.workloadTecnico) > 5 ? 'busy' as const : 'available' as const,
+        email: `${tech.nameTecnico.toLowerCase().replace(/\s+/g, '.')}@telconova.com`,
+        phone: '+1234567890',
+        certifications: []
+      }))
+      .filter(tech => {
+        if (filters?.zone && tech.zone !== filters.zone) return false;
+        if (filters?.specialty && tech.specialty !== filters.specialty) return false;
+        if (filters?.availability && tech.availability !== filters.availability) return false;
+        return true;
+      });
   }
 
   async getTechnician(id: string): Promise<Technician> {
@@ -275,18 +284,14 @@ class ApiService {
       return mockApiService.registerTechnician(data);
     }
     
-    const backendData = {
-      nombre: data.name,
-      correo: data.email,
-      telefono: data.phone,
-      especialidad: data.specialty,
-      zona: data.zone
-    };
-    
-    return this.request<{ message: string }>('/technicians/register', {
+    const response = await this.request<string>('/technicians/create', {
       method: 'POST',
-      body: JSON.stringify(backendData),
+      body: JSON.stringify(data),
     });
+    
+    return {
+      message: response
+    };
   }
 }
 
