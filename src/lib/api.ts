@@ -230,7 +230,7 @@ class ApiService {
       return mockApiService.getTechnicians(filters);
     }
 
-    const technicians = await this.request<Technician[]>('/technicians/all');
+    const technicians = await this.request<Technician[]>('/api/technicians/all');
 
     // Transform backend format to frontend format and apply filters
     return technicians
@@ -274,14 +274,14 @@ class ApiService {
     if (filters?.zona) params.append('zona', filters.zona);
 
     const query = params.toString() ? `?${params.toString()}` : '';
-    return this.request<WorkOrder[]>(`/orders/all${query}`);
+    return this.request<WorkOrder[]>(`/api/orders/all${query}`);
   }
 
   async getWorkOrder(id: string): Promise<WorkOrder> {
     if (USE_MOCK_API) {
       return mockApiService.getWorkOrder(id);
     }
-    return this.request<WorkOrder>(`/orders/${id}`);
+    return this.request<WorkOrder>(`/api/orders/${id}`);
   }
 
   // Assignment endpoints
